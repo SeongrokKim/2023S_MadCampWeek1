@@ -19,14 +19,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.madcampweek1.R;
 import com.example.madcampweek1.databinding.FragmentHomeBinding;
 
-import java.util.ArrayList;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
     private RecyclerView recyclerViewContacts;
     private Button buttonAddContact;
-    private ArrayList<Contact> contactList = new ArrayList<>();
+    private JSONArray contactList;
     private ContactAdapter contactAdapter;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -37,7 +39,7 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        if (contactList.size()==0) {
+        if (contactList == null) {
             // contactList가 null인 경우에만 초기화
             contactList = getInitialContactList();
         }
@@ -76,16 +78,18 @@ public class HomeFragment extends Fragment {
                         // 사용자가 입력한 값 가져오기
                         String name = editTextName.getText().toString();
                         String phoneNumber = editTextPhoneNumber.getText().toString();
+                        try{
+                            JSONObject newContact = new JSONObject();
+                            newContact.put("name", name);
+                            newContact.put("phoneNumber", phoneNumber);
+                            contactList.put(newContact);
 
-                        // 새로운 연락처 데이터 생성
-                        Contact newContact = new Contact(name, phoneNumber);
-
-                        // contactList에 새로운 연락처 데이터 추가
-                        contactList.add(newContact);
-
-                        // 어댑터에 데이터 변경을 알려줍니다.
-                        contactAdapter.notifyDataSetChanged();
-                        dialog.dismiss();
+                            // 어댑터에 데이터 변경을 알려줍니다.
+                            contactAdapter.notifyDataSetChanged();
+                            dialog.dismiss();
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                        }
                     }
                 });
 
@@ -107,29 +111,12 @@ public class HomeFragment extends Fragment {
         return root;
     }
 
-    public class Contact {
-        private String name;
-        private String phoneNumber;
-
-        public Contact(String name, String phoneNumber) {
-            this.name = name;
-            this.phoneNumber = phoneNumber;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getPhoneNumber() {
-            return phoneNumber;
-        }
-    }
 
     public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder> {
 
-        private ArrayList<Contact> contactList;
+        private JSONArray contactList;
 
-        public ContactAdapter(ArrayList<Contact> contactList) {
+        public ContactAdapter(JSONArray contactList) {
             this.contactList = contactList;
         }
 
@@ -147,14 +134,21 @@ public class HomeFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             // ViewHolder에 데이터를 바인딩하는 코드 작성
-            Contact contact = contactList.get(position);
-            holder.textViewName.setText(contact.getName());
-            holder.textViewPhoneNumber.setText(contact.getPhoneNumber());
+            try{
+                JSONObject jsonObject = contactList.getJSONObject(position);
+                String name = jsonObject.getString("name");
+                String phoneNumber = jsonObject.getString("phoneNumber");
+                holder.textViewName.setText(name);
+                holder.textViewPhoneNumber.setText(phoneNumber);
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+
         }
 
         @Override
         public int getItemCount() {
-            return contactList.size();
+            return contactList.length();
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
@@ -171,21 +165,57 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private ArrayList<Contact> getInitialContactList() {
-        ArrayList<Contact> initialList = new ArrayList<>();
+    private JSONArray getInitialContactList() {
+        JSONArray jsonArray = new JSONArray();
+        try{
+            JSONObject contact1 = new JSONObject();
+            contact1.put("name", "철수");
+            contact1.put("phoneNumber", "010-1234-5678");
+            jsonArray.put(contact1);
 
-        // 9개의 초기 연락처 데이터 생성 및 추가
-        initialList.add(new Contact("철수", "010-1234-5678"));
-        initialList.add(new Contact("영희", "010-2345-6789"));
-        initialList.add(new Contact("엄마", "010-3456-7890"));
-        initialList.add(new Contact("아빠", "010-4567-8901"));
-        initialList.add(new Contact("동생", "010-5678-9012"));
-        initialList.add(new Contact("형", "010-6789-0123"));
-        initialList.add(new Contact("누나", "010-7890-1234"));
-        initialList.add(new Contact("할머니", "010-8901-2345"));
-        initialList.add(new Contact("할아버지", "010-9012-3456"));
+            JSONObject contact2 = new JSONObject();
+            contact2.put("name", "영희");
+            contact2.put("phoneNumber", "010-2345-6789");
+            jsonArray.put(contact2);
 
-        return initialList;
+            JSONObject contact3 = new JSONObject();
+            contact3.put("name", "엄마");
+            contact3.put("phoneNumber", "010-3456-7890");
+            jsonArray.put(contact3);
+
+            JSONObject contact4 = new JSONObject();
+            contact4.put("name", "아빠");
+            contact4.put("phoneNumber", "010-4567-8901");
+            jsonArray.put(contact4);
+
+            JSONObject contact5 = new JSONObject();
+            contact5.put("name", "동생");
+            contact5.put("phoneNumber", "010-5678-9012");
+            jsonArray.put(contact5);
+
+            JSONObject contact6 = new JSONObject();
+            contact6.put("name", "형");
+            contact6.put("phoneNumber", "010-6789-0123");
+            jsonArray.put(contact6);
+
+            JSONObject contact7 = new JSONObject();
+            contact7.put("name", "누나");
+            contact7.put("phoneNumber", "010-7890-1234");
+            jsonArray.put(contact7);
+
+            JSONObject contact8 = new JSONObject();
+            contact8.put("name", "할머니");
+            contact8.put("phoneNumber", "010-8901-2345");
+            jsonArray.put(contact8);
+
+            JSONObject contact9 = new JSONObject();
+            contact9.put("name", "할아버지");
+            contact9.put("phoneNumber", "010-9012-3456");
+            jsonArray.put(contact9);
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        return jsonArray;
     }
 
     @Override
