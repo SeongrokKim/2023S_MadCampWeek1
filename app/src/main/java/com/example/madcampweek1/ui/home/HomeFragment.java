@@ -4,15 +4,16 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,49 +34,35 @@ public class HomeFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        HomeViewModel homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
-
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         if (contactList == null) {
-            // contactList가 null인 경우에만 초기화
             contactList = getInitialContactList();
         }
 
-        // RecyclerView 초기화
         recyclerViewContacts = root.findViewById(R.id.recyclerViewContacts);
         recyclerViewContacts.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        // 연락처 어댑터 초기화
         contactAdapter = new ContactAdapter(contactList);
         recyclerViewContacts.setAdapter(contactAdapter);
 
-
-
-        // 새 연락처 추가 버튼 클릭 이벤트 처리
         buttonAddContact = root.findViewById(R.id.buttonAddContact);
         buttonAddContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 다이얼로그 생성
                 AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(requireContext());
                 dialogBuilder.setTitle("새 연락처 추가");
 
-                // 다이얼로그에 표시될 레이아웃 설정
                 View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_contact, null);
                 dialogBuilder.setView(dialogView);
 
-                // 다이얼로그 내의 뷰 요소 가져오기
                 EditText editTextName = dialogView.findViewById(R.id.editTextName);
                 EditText editTextPhoneNumber = dialogView.findViewById(R.id.editTextPhoneNumber);
 
-                // 확인 버튼 클릭 시 동작 설정
                 dialogBuilder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // 사용자가 입력한 값 가져오기
                         String name = editTextName.getText().toString();
                         String phoneNumber = editTextPhoneNumber.getText().toString();
                         try{
@@ -84,7 +71,6 @@ public class HomeFragment extends Fragment {
                             newContact.put("phoneNumber", phoneNumber);
                             contactList.put(newContact);
 
-                            // 어댑터에 데이터 변경을 알려줍니다.
                             contactAdapter.notifyDataSetChanged();
                             dialog.dismiss();
                         }catch (JSONException e){
@@ -93,7 +79,6 @@ public class HomeFragment extends Fragment {
                     }
                 });
 
-                // 취소 버튼 클릭 시 동작 설정
                 dialogBuilder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -101,13 +86,10 @@ public class HomeFragment extends Fragment {
                     }
                 });
 
-                // 다이얼로그 보여주기
                 AlertDialog dialog = dialogBuilder.create();
                 dialog.show();
             }
         });
-
-
         return root;
     }
 
@@ -116,16 +98,13 @@ public class HomeFragment extends Fragment {
 
         private JSONArray contactList;
 
-        public ContactAdapter(JSONArray contactList) {
-            this.contactList = contactList;
+        public ContactAdapter(JSONArray contactlist) {
+            this.contactList = contactlist;
         }
-
-        // ViewHolder 클래스와 메소드 구현 생략
 
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            // ViewHolder 생성 및 반환하는 코드 작성
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             View view = inflater.inflate(R.layout.item, parent, false);
             return new ViewHolder(view);
@@ -133,13 +112,20 @@ public class HomeFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            // ViewHolder에 데이터를 바인딩하는 코드 작성
             try{
                 JSONObject jsonObject = contactList.getJSONObject(position);
                 String name = jsonObject.getString("name");
                 String phoneNumber = jsonObject.getString("phoneNumber");
                 holder.textViewName.setText(name);
                 holder.textViewPhoneNumber.setText(phoneNumber);
+                holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        showPopupMenu(holder.itemView, position);
+                        return true;
+                    }
+                });
+
             }catch (JSONException e){
                 e.printStackTrace();
             }
@@ -152,16 +138,90 @@ public class HomeFragment extends Fragment {
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
-            // ViewHolder 내부의 뷰 요소 선언
             TextView textViewName;
             TextView textViewPhoneNumber;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
-                // 뷰 요소 초기화 작업
                 textViewName = itemView.findViewById(R.id.nameItem);
                 textViewPhoneNumber = itemView.findViewById(R.id.numItem);
             }
+        }
+        private void showPopupMenu(View view, final int position) {
+            PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
+            popupMenu.getMenuInflater().inflate(R.menu.popup_menu, popupMenu.getMenu());
+            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    int itemId = item.getItemId();
+                    if (itemId == R.id.menu_edit) {
+                        showEditDialog(position);
+                        return true;
+                    } else if (itemId == R.id.menu_delete) {
+                        deleteContact(position);
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            });
+
+            popupMenu.show();
+        }
+
+        private void showEditDialog(final int position) {
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(requireContext());
+            dialogBuilder.setTitle("연락처 편집");
+
+            View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_contact, null);
+            dialogBuilder.setView(dialogView);
+
+            EditText editTextName = dialogView.findViewById(R.id.editTextName);
+            EditText editTextPhoneNumber = dialogView.findViewById(R.id.editTextPhoneNumber);
+
+            try {
+                JSONObject contact = contactList.getJSONObject(position);
+                String name = contact.getString("name");
+                String phoneNumber = contact.getString("phoneNumber");
+                editTextName.setText(name);
+                editTextPhoneNumber.setText(phoneNumber);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            dialogBuilder.setPositiveButton("수정", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String name = editTextName.getText().toString();
+                    String phoneNumber = editTextPhoneNumber.getText().toString();
+                    try {
+                        JSONObject updatedContact = contactList.getJSONObject(position);
+                        updatedContact.put("name", name);
+                        updatedContact.put("phoneNumber", phoneNumber);
+                        contactList.put(position, updatedContact);
+                        contactAdapter.notifyDataSetChanged();
+                        dialog.dismiss();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            dialogBuilder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+            AlertDialog dialog = dialogBuilder.create();
+            dialog.show();
+        }
+
+        private void deleteContact(int position) {
+            contactList.remove(position);
+            contactAdapter.notifyItemRemoved(position);
+            contactAdapter.notifyItemRangeChanged(position, contactList.length());
         }
     }
 
