@@ -15,7 +15,7 @@ public class DashboardViewModel extends ViewModel {
     public DashboardViewModel() {
 
         numLines = new MutableLiveData<>();
-        numLines.setValue("Number of Lines : 1");
+        numLines.setValue("Number of Lines : 0");
 
     }
 
