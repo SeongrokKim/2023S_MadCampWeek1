@@ -28,7 +28,6 @@ public class NotificationsFragment extends Fragment {
 
     private FragmentNotificationsBinding binding;
     private RecyclerView recyclerViewRoutines;
-    private RecyclerView recyclerViewExercises;
     private ArrayList<CardItem> cardItemArrayList;
     private Button btnAddRoutine;
     private Button buttonAdd;
@@ -41,7 +40,6 @@ public class NotificationsFragment extends Fragment {
 
         btnAddRoutine = root.findViewById(R.id.btnAddRoutine);
         recyclerViewRoutines = root.findViewById(R.id.recyclerViewRoutines);
-        recyclerViewExercises = root.findViewById(R.id.recyclerViewExercises);
         cardItemArrayList = new ArrayList<>();
 
 
@@ -50,56 +48,14 @@ public class NotificationsFragment extends Fragment {
         binding.btnAddRoutine.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-                LayoutInflater inflater = requireActivity().getLayoutInflater();
-                View dialogView = inflater.inflate(R.layout.dialog_add_routine, null);
+                recyclerViewRoutines.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+                adapter = new MyAdapter(cardItemArrayList);
+                recyclerViewRoutines.setAdapter(adapter);
 
 
+                cardItemArrayList.add(new CardItem("hello", "world"));
+                adapter.notifyDataSetChanged();
 
-                builder.setView(dialogView)
-                        .setPositiveButton("완료", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // 완료 버튼을 클릭했을 때 처리할 코드 추가
-                                EditText editTextTitle = dialogView.findViewById(R.id.editTextTitle);
-                                EditText editTextExercise = dialogView.findViewById(R.id.editTextExercise);
-                                EditText editTextTime = dialogView.findViewById(R.id.editTextTime);
-
-                                String title = editTextTitle.getText().toString();
-                                String exercise = editTextExercise.getText().toString();
-                                int time = Integer.parseInt(editTextTime.getText().toString());
-
-                                // 루틴 추가 작업을 수행할 코드 추가
-
-                                dialog.dismiss(); // 다이얼로그 닫기
-                            }
-                        })
-                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss(); // 다이얼로그 닫기
-                            }
-                        });
-                AlertDialog dialog = builder.create();
-                dialog.show();
-
-                buttonAdd = dialogView.findViewById(R.id.buttonAdd);
-                buttonAdd.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        recyclerViewExercises.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-                        adapter = new MyAdapter(cardItemArrayList);
-                        recyclerViewExercises.setAdapter(adapter);
-
-                        EditText exercise = dialogView.findViewById(R.id.editTextExercise);
-                        EditText time = dialogView.findViewById(R.id.editTextTime);
-
-                        cardItemArrayList.add(new CardItem(exercise.getText().toString(), time.getText().toString()));
-                        adapter.notifyDataSetChanged();
-
-                    }
-                });
             }
         });
 
