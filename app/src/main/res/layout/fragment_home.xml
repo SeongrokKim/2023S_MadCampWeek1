@@ -4,8 +4,28 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/editTextSearch"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:hint="이름으로 검색"
+            android:inputType="text"
+            android:maxLines="1"
+            android:singleLine="true" />
+
+        <Button
+            android:id="@+id/buttonSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="검색" />
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
@@ -17,27 +37,33 @@
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:text="새 연락처 추가"
-            app:layout_constraintVertical_weight="1"
+            app:layout_constraintBottom_toTopOf="@id/recyclerViewContacts"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/recyclerViewContacts" />
+            app:layout_constraintVertical_weight="1" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewContacts"
             android:layout_width="match_parent"
-            android:layout_height="400dp"
-            app:layout_constraintVertical_weight="9"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/buttonAddContact"
+            android:layout_height="350dp"
             android:scrollbarFadeDuration="0"
             android:scrollbarSize="5dp"
             android:scrollbarThumbVertical="@android:color/darker_gray"
             android:scrollbars="vertical"
-            />
-
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/buttonAddContact"
+            app:layout_constraintVertical_weight="9" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/textViewNoResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="검색 결과가 없습니다."
+        android:textAlignment="center"
+        android:textStyle="bold"
+        android:visibility="gone" />
 
 </LinearLayout>

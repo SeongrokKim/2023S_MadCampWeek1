@@ -24,6 +24,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
@@ -31,11 +33,27 @@ public class HomeFragment extends Fragment {
     private Button buttonAddContact;
     private JSONArray contactList;
     private ContactAdapter contactAdapter;
+    private EditText editTextSearch;
+    private Button buttonSearch;
+    private TextView textViewNoResult;
+    private JSONArray filteredContactList;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        editTextSearch = root.findViewById(R.id.editTextSearch);
+        buttonSearch = root.findViewById(R.id.buttonSearch);
+        textViewNoResult = root.findViewById(R.id.textViewNoResult);
+
+        buttonSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String query = editTextSearch.getText().toString();
+                filterContactList(query);
+            }
+        });
 
         if (contactList == null) {
             contactList = getInitialContactList();
@@ -90,7 +108,39 @@ public class HomeFragment extends Fragment {
                 dialog.show();
             }
         });
+
         return root;
+    }
+
+    private void filterContactList(String query) {
+        filteredContactList = new JSONArray();
+
+        if (query.isEmpty()) {
+            // 검색어가 비어있을 경우 모든 아이템을 표시
+            filteredContactList = contactList;
+        } else {
+            // 검색어와 일치하는 아이템만 표시
+            for (int i = 0; i < contactList.length(); i++) {
+                try {
+                    JSONObject contact = contactList.getJSONObject(i);
+                    String name = contact.getString("name");
+                    if (name.toLowerCase().contains(query.toLowerCase())) {
+                        filteredContactList.put(contact);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        contactAdapter.setContactList(filteredContactList);
+        contactAdapter.notifyDataSetChanged();
+
+        if (filteredContactList.length() == 0) {
+            textViewNoResult.setVisibility(View.VISIBLE);
+        } else {
+            textViewNoResult.setVisibility(View.GONE);
+        }
     }
 
 
@@ -135,6 +185,10 @@ public class HomeFragment extends Fragment {
         @Override
         public int getItemCount() {
             return contactList.length();
+        }
+
+        public void setContactList(JSONArray contactList) {
+            this.contactList = contactList;
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
