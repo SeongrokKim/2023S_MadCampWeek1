@@ -26,4 +26,43 @@ import java.util.ArrayList;
 
 public class NotificationsFragment extends Fragment {
 
+    private FragmentNotificationsBinding binding;
+    private RecyclerView recyclerViewRoutines;
+    private ArrayList<CardItem> cardItemArrayList;
+    private Button btnAddRoutine;
+    private Button buttonAdd;
+    private MyAdapter adapter;
+
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentNotificationsBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
+
+        btnAddRoutine = root.findViewById(R.id.btnAddRoutine);
+        recyclerViewRoutines = root.findViewById(R.id.recyclerViewRoutines);
+        cardItemArrayList = new ArrayList<>();
+
+        // '루틴 추가' 버튼을 클릭하면 다이얼로그를 띄웁니다.
+        binding.btnAddRoutine.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerViewRoutines.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+                adapter = new MyAdapter(cardItemArrayList);
+                recyclerViewRoutines.setAdapter(adapter);
+
+
+                cardItemArrayList.add(new CardItem("hello", "world"));
+                adapter.notifyDataSetChanged();
+
+            }
+        });
+
+        return root;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 }
