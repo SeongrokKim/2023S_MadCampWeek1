@@ -1,23 +1,26 @@
-package com.example.madcampweek1.ui.dashboard;
+package com.example.madcampweek1.ui.notifications;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
-import com.example.madcampweek1.R;
 import com.example.madcampweek1.databinding.FragmentImageAugmentBinding;
-public class ImageAugmentFragment extends Fragment {
-    private static final String ARG_IMAGE_RESOURCE_ID = "imageResourceId";
+import com.example.madcampweek1.databinding.FragmentTimerBinding;
+import com.example.madcampweek1.ui.dashboard.ImageAugmentFragment;
+
+public class TimerFragment extends Fragment {
 
     private int imageResourceId;
-    private FragmentImageAugmentBinding binding;
+    private FragmentTimerBinding binding;
 
     public static ImageAugmentFragment newInstance(String imagePath) {
         ImageAugmentFragment fragment = new ImageAugmentFragment();
@@ -39,7 +42,7 @@ public class ImageAugmentFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // ImageAugmentFragment의 레이아웃을 inflate하고 반환합니다.
-        binding = FragmentImageAugmentBinding.inflate(inflater, container, false);
+        binding = FragmentTimerBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         ImageView imageView = binding.imageView;
         if (getArguments() != null) {

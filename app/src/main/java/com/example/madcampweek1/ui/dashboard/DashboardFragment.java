@@ -1,12 +1,18 @@
 package com.example.madcampweek1.ui.dashboard;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.net.ipsec.ike.SaProposal;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.BoringLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +23,8 @@ import android.widget.Space;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -41,8 +49,12 @@ import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
 import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.Manifest;
 
@@ -51,18 +63,28 @@ public class DashboardFragment extends Fragment {
     private FragmentDashboardBinding binding;
     private final int repeatedLines = 5 ;
     private final int numImagesInCol = 4;
+    private final int INITIAL_IMAGE_NUMBER = 20;
+    private final String TAG = "DashboardFragment";
     private DashboardViewModel dashboardViewModel ;
     private Button addButton;
     private TextView nolText;
     private RecyclerView recyclerViewGallery ;
-    private JSONArray dataList;
-
+    private List<Map<String, String>> dataList;
+    private List<Map<String, String>> imageList; // dataList와 다른 점 : imageList는 저장소 데이터들이고, dataList는 보여지는 data들임
+    private boolean isImageListLoaded = false;
     private GalleryAdapter adapter;
+    private static final int REQUEST_STORAGE_PERMISSION = 1;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        dashboardViewModel = new ViewModelProvider(requireActivity()).get(DashboardViewModel.class);
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        dashboardViewModel =
-                new ViewModelProvider(this).get(DashboardViewModel.class);
+        //dashboardViewModel = new ViewModelProvider(this).get(DashboardViewModel.class);
 
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
 
@@ -72,11 +94,16 @@ public class DashboardFragment extends Fragment {
 
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 4);
         recyclerViewGallery.setLayoutManager(layoutManager);
+        dataList = dashboardViewModel.getDataList();
+        Toast.makeText(getContext(), Integer.toString(dataList.size()), Toast.LENGTH_SHORT).show();
 
-        if (dataList == null){
-            dataList = initDataList();
-            for( int i = 0 ; i < dataList.length() ; i++)dashboardViewModel.increaseNumLines() ;
+        if (dataList.size() == 0){
+
+            dataList = initDataList();  // 데이터를 어떻게 가져올지에 따라 구현되어야 합니다.
+            dashboardViewModel.setDataList(dataList);
+            for(Map<String,String> map : dataList) dashboardViewModel.increaseNumLines();
         }
+
         adapter = new GalleryAdapter(getContext(), dataList); // dataList는 표시할 데이터 목록
 
         recyclerViewGallery.setAdapter(adapter);
@@ -91,18 +118,25 @@ public class DashboardFragment extends Fragment {
                 String name = "image" + Integer.toString(dashboardViewModel.getNumLinesInt());
                 String imagePath = "temp_picture_" + Integer.toString(dashboardViewModel.getNumLinesInt()); //temporal string
 
-                JSONObject jsonObject = new JSONObject();
-                Toast.makeText(getContext(), imagePath, Toast.LENGTH_SHORT).show();
-                try {
-                    jsonObject.put("name", name);
-                    jsonObject.put("path", imagePath);
-                    Toast.makeText(getContext(), name, Toast.LENGTH_SHORT).show();
-                    adapter.addItem(jsonObject);
-                }catch(JSONException e){
-                    e.printStackTrace();
-                    Toast.makeText(getContext(), "Here", Toast.LENGTH_SHORT);
-                }
+                Map<String, String> map = new HashMap<>();
+                map.put("name", name);
+                map.put("path", imagePath);
+                //Toast.makeText(getContext(), name, Toast.LENGTH_SHORT).show();
+                adapter.addItem(map);
 
+//                //저장소 적용
+//                if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+//                    // 권한이 이미 허용된 경우 이미지 가져오기
+//                    loadImageList();
+//                    adapter.addItem(getNextImage());
+//
+//                } else {
+//                    // 권한이 없는 경우 권한 요청
+//
+//                    requestStoragePermission();
+//
+//                    ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+//                }
 
             }
         });
@@ -110,7 +144,7 @@ public class DashboardFragment extends Fragment {
         //Toast.makeText(getContext(), Integer.toString(lineMaxSize), Toast.LENGTH_SHORT).show();
 
         dashboardViewModel.getNumLines().observe(getViewLifecycleOwner(), nolText::setText);
-
+        //dashboardViewModel.getDataListLive().observe(getViewLifecycleOwner(), )
         return root;
     }
 
@@ -120,32 +154,32 @@ public class DashboardFragment extends Fragment {
         binding = null;
     }
 
-    private JSONArray initDataList(){
-        JSONArray dataList = new JSONArray();
-        //String imagePath = imageDataProvider.getNextImagePath();
-        for(int i = 1 ; i <= 20 ; i++) {
-            String name = "image" + Integer.toString(i);
-            String imagePath = "temp_picture_" + Integer.toString(i); //temporal string
+    private List<Map<String, String>> initDataList(){
+        List<Map<String, String>> dList = new ArrayList<>();
+        List<String> images = getDrawablePNGList(getContext());
+        for(String image : images) {
+            Map<String, String> map = new HashMap<>();
+            map.put("name", image);
+            map.put("path", image);
 
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("name", name);
-                jsonObject.put("path", imagePath);
+            dList.add(map);
 
-                dataList.put(jsonObject);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Toast.makeText(getContext(), "Here", Toast.LENGTH_SHORT);
-            }
         }
-        return dataList;
+//        for(int i = 0 ; i < INITIAL_IMAGE_NUMBER ; i++) {
+//            addDataList(getNextImage());
+//        }
+        return dList;
+    }
+    private void addDataList(Map<String, String> map){
+        dataList.add(map);
+        dashboardViewModel.increaseNumLines();
     }
 
     public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHolder> {
         private Context context;
-        private JSONArray dataList;
+        private List<Map<String, String>> dataList;
 
-        public GalleryAdapter(Context context, JSONArray dataList) {
+        public GalleryAdapter(Context context, List<Map<String, String>> dataList) {
             this.context = context;
             this.dataList = dataList;
         }
@@ -156,66 +190,60 @@ public class DashboardFragment extends Fragment {
             return new ViewHolder(view);
         }
 
-        public void addItem(JSONObject item) {
+        public void addItem(Map<String, String> item) {
             // JSON 하나 추가
-            dataList.put(item);
-            notifyItemInserted(dataList.length() - 1);
+            //잘못된 데이터명의 경우 Error로 이미지 변경
+            if(getResources().getIdentifier(item.get("path"), "drawable", context.getPackageName()) == 0){
+                item.replace("path", "error");
+            }
+            dataList.add(item);
+            notifyItemInserted(dataList.size() - 1);
         }
 
         // RecyclerView 어댑터에 데이터를 추가하는 메서드
-        public void addItem(JSONArray jsonArray) {
+        public void addItem(List<Map<String, String>> maps) {
             //JSON Array 추가
-            for (int i = 0; i < jsonArray.length(); i++) {
-                try {
-                    JSONObject item = jsonArray.getJSONObject(i);
-                    dataList.put(item);
-                    notifyItemInserted(dataList.length() - 1);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            for (Map<String,String> item : maps) {
+                dataList.add(item);
+                notifyItemInserted(dataList.size() - 1);
             }
         }
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             // 아이템 데이터 설정
-            try {
-                JSONObject dataItem = dataList.getJSONObject(position);
-                // 아이템 데이터를 ViewHolder의 뷰에 바인딩하는 로직을 구현한다.
-                // 예를 들어:
-                String name = dataItem.getString("name");
-                String filePath = dataItem.getString("path");
-                holder.textView.setText(name);
-                int resourceId = getResources().getIdentifier(filePath, "drawable", context.getPackageName());
 
-                holder.imageView.setImageResource(resourceId);
-                holder.imageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // ImageView가 클릭되었을 때 수행할 동작을 여기에 작성
-                        // 예를 들어 해당 이미지를 확대해서 보여주는 등의 동작
-                        //Toast.makeText(context, filePath, Toast.LENGTH_SHORT).show();
-                        int imageResId = resourceId; // 클릭된 이미지 리소스 ID
+            Map<String,String> dataItem = dataList.get(position);
+            // 아이템 데이터를 ViewHolder의 뷰에 바인딩하는 로직을 구현한다.
+            // 예를 들어:
+            String name = dataItem.get("name");
+            String filePath = dataItem.get("path");// 실제 이미지 파일의 경로로 설정해야 함
+            holder.textView.setText(name);
+            holder.imageView = pathToImageView(filePath);
+            Toast.makeText(getContext(), filePath, Toast.LENGTH_SHORT).show();
+            holder.imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // ImageView가 클릭되었을 때 수행할 동작을 여기에 작성
+                    // 예를 들어 해당 이미지를 확대해서 보여주는 등의 동작
+                    //Toast.makeText(context, filePath, Toast.LENGTH_SHORT).show();
+                    String imagePath = (String) holder.imageView.getTag();
+                    // 새로운 프래그먼트를 생성하고 전달할 데이터를 설정합니다.
+                    ImageAugmentFragment imageFragment = ImageAugmentFragment.newInstance(imagePath);
+                    // 프래그먼트 트랜잭션을 시작합니다.
+                    FragmentManager fragmentManager =  requireActivity().getSupportFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.fragment_container, imageFragment)
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
 
-                        // 새로운 프래그먼트를 생성하고 전달할 데이터를 설정합니다.
-                        ImageAugmentFragment imageFragment = ImageAugmentFragment.newInstance(imageResId);
-                        // 프래그먼트 트랜잭션을 시작합니다.
-                        FragmentManager fragmentManager =  requireActivity().getSupportFragmentManager();
-                        fragmentManager.beginTransaction()
-                                .replace(R.id.fragment_container, imageFragment)
-                                .addToBackStack(null)
-                                .commit();
-
-                    }
-                });
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
         }
 
         @Override
         public int getItemCount() {
-            return dataList.length();
+            return dataList.size();
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
@@ -226,9 +254,118 @@ public class DashboardFragment extends Fragment {
                 super(itemView);
                 imageView = itemView.findViewById(R.id.imageView);
                 textView = itemView.findViewById(R.id.textView);
+            }
+        }
+        private ImageView pathToImageView(String filePath){
+            ImageView imageView = new ImageView(context);
+            if(filePath.contains("/")){
+                //저장소 내부 파일을 다루는 경우
+                File imageFile = new File(filePath);
+                Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+                imageView.setImageBitmap(bitmap);
+            }else {
+                //어플리케이션 내부 파일을 다루는 경우
+                int resourceId = getResources().getIdentifier(filePath, "drawable", context.getPackageName());
+                imageView.setImageResource(resourceId);
+                Toast.makeText(getContext(), filePath, Toast.LENGTH_SHORT).show();
+            }
+            imageView.setTag(filePath);
+            return imageView ;
+        }
+    }
+    public List<String> getDrawablePNGList(Context context) {
+        List<String> pngList = new ArrayList<>();
+        Resources resources = context.getResources();
+        String packageName = context.getPackageName();
 
+        Field[] fields = R.drawable.class.getDeclaredFields();
+        for (Field field : fields) {
+            try {
+                String resourceName = field.getName();
+                if (resourceName.endsWith(".png")) {
+                    int resourceId = resources.getIdentifier(resourceName, "drawable", packageName);
+                    pngList.add(resourceName);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
+        return pngList;
     }
+
+
+    private void loadImageList() {
+        //Toast.makeText(getContext(), Boolean.toString(isImageListLoaded), Toast.LENGTH_SHORT).show();
+        if (isImageListLoaded) {
+            // 이미지 목록이 이미 로드되었다면 다시 가져올 필요 없음
+            return;
+        }
+
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // 내부 저장소 권한이 허용되지 않은 경우 권한 요청
+            requestStoragePermission();
+        } else {
+            // 내부 저장소 권한이 허용된 경우 이미지 파일 목록을 가져오기
+            retrieveImageList();
+        }
+    }
+
+
+    private ActivityResultLauncher<String> requestExternalStoragePermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    // 권한이 허용된 경우 처리 수행
+                    // ...
+                    retrieveImageList();
+                } else {
+                    // 권한이 거부된 경우 처리 수행
+                    // ...
+                    Toast.makeText(getContext(), "권한이 거부되었습니다.", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+    private void requestStoragePermission() {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestExternalStoragePermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+    }
+    private void retrieveImageList() {
+        ContentResolver contentResolver = requireContext().getContentResolver();
+        Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+
+        Cursor cursor = contentResolver.query(uri, null, null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            imageList = new ArrayList<>();
+
+            do {
+                String name = cursor.getString(Math.max(0, cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME)));
+                String path = cursor.getString(Math.max(0, cursor.getColumnIndex(MediaStore.Images.Media.DATA)));
+
+                Map<String, String> imageMap = new HashMap<>();
+                imageMap.put("name", name);
+                imageMap.put("path", path);
+
+                imageList.add(imageMap);
+            } while (cursor.moveToNext());
+
+            cursor.close();
+            isImageListLoaded = true;
+        }
+    }
+
+    public HashMap<String, String> getNextImage(){
+        if (!isImageListLoaded){
+            loadImageList();
+        }
+
+        int index = dashboardViewModel.getNumLinesInt();
+        HashMap<String, String> map = (HashMap<String, String>) imageList.get(index);
+        dashboardViewModel.increaseNumLines();
+        return map;
+    }
+
+
 }
