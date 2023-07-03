@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,37 +29,36 @@ public class NotificationsFragment extends Fragment {
 
     private FragmentNotificationsBinding binding;
     private RecyclerView recyclerViewRoutines;
-    private ArrayList<CardItem> cardItemArrayList;
+    private ArrayList<CardItem> cardItemArrayList = new ArrayList<>();
     private Button btnAddRoutine;
-    private Button buttonAdd;
     private MyAdapter adapter;
+
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentNotificationsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
         btnAddRoutine = root.findViewById(R.id.btnAddRoutine);
         recyclerViewRoutines = root.findViewById(R.id.recyclerViewRoutines);
-        cardItemArrayList = new ArrayList<>();
+
+        recyclerViewRoutines.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        adapter = new MyAdapter(cardItemArrayList);
+        recyclerViewRoutines.setAdapter(adapter);
 
         // '루틴 추가' 버튼을 클릭하면 다이얼로그를 띄웁니다.
         binding.btnAddRoutine.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                recyclerViewRoutines.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-                adapter = new MyAdapter(cardItemArrayList);
-                recyclerViewRoutines.setAdapter(adapter);
-
-
-                cardItemArrayList.add(new CardItem("hello", "world"));
+                CardItem cardItem = new CardItem();
+                cardItemArrayList.add(cardItem);
                 adapter.notifyDataSetChanged();
 
             }
         });
-
         return root;
     }
+
 
     @Override
     public void onDestroyView() {
