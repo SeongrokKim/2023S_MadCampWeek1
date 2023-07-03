@@ -42,8 +42,6 @@ public class NotificationsFragment extends Fragment {
         recyclerViewRoutines = root.findViewById(R.id.recyclerViewRoutines);
         cardItemArrayList = new ArrayList<>();
 
-
-
         // '루틴 추가' 버튼을 클릭하면 다이얼로그를 띄웁니다.
         binding.btnAddRoutine.setOnClickListener(new View.OnClickListener() {
             @Override
