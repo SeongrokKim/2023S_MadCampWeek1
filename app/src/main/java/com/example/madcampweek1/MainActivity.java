@@ -1,7 +1,6 @@
 package com.example.madcampweek1;
 
 import android.os.Bundle;
-import android.widget.PopupWindow;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -16,7 +15,7 @@ import com.example.madcampweek1.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
-    private PopupWindow popupWindow;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,10 +31,5 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
     }
-    public PopupWindow getPopupWindow(){
-        return popupWindow;
-    }
-    public void setPopupWindow(PopupWindow popupWindow){
-        this.popupWindow = popupWindow;
-    }
+
 }
