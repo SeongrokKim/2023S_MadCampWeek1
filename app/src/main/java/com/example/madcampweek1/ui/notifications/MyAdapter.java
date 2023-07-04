@@ -10,6 +10,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -78,12 +80,15 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
                     if (timeCho.length() == 1){
                         timeCho = "0"+timeCho;
                     }
-                    String time = "00:"+timeBun+":"+timeCho;
+                    String time = "00:"+timeCho+":"+timeBun;
                     Map<String, String> exMap = new HashMap<>();
                     exMap.put("name", exercise);
                     exMap.put("time", time);
                     exercises.add(exMap);
                 }
+                TimerDialogFragment timerDialogFragment = TimerDialogFragment.getInstance(title, cycles, exercises);
+                FragmentManager fragmentManager = ((AppCompatActivity) v.getContext()).getSupportFragmentManager();
+                timerDialogFragment.show(fragmentManager, TimerDialogFragment.TAG_TIMER_DIALOG);
 
 
             }
