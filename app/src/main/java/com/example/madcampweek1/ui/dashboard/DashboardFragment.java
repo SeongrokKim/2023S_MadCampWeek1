@@ -161,18 +161,12 @@ public class DashboardFragment extends Fragment {
                 String routineName = "Tmp Rt";
                 int reps = 2;
                 List<Map<String, String>> exercises = new ArrayList<>();
-                Map<String, String> exMap = new HashMap<>();
-                exMap.put("name", "Exc1");
-                exMap.put("time", "00:01:03");
-                exercises.add(exMap);
-                Map<String, String> exMap2 = new HashMap<>();
-                exMap2.put("name", "Exc2");
-                exMap2.put("time", "00:00:02");
-                exercises.add(exMap2);
-                Map<String, String> exMap3 = new HashMap<>();
-                exMap3.put("name", "Exc3");
-                exMap3.put("time", "00:00:03");
-                exercises.add(exMap3);
+                for (int i = 1; i <= 11; i++) {
+                    Map<String, String> exMap = new HashMap<>();
+                    exMap.put("name", "Exc" + i);
+                    exMap.put("time", "00:00:03");
+                    exercises.add(exMap);
+                }
                 TimerDialogFragment timerDialogFragment = TimerDialogFragment.getInstance(routineName, reps, exercises);
                 //TimerDialogFragment timerDialogFragment = TimerDialogFragment.getInstance();
                 timerDialogFragment.show(getChildFragmentManager(), TimerDialogFragment.TAG_TIMER_DIALOG);

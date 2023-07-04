@@ -1,8 +1,26 @@
 package com.example.madcampweek1.ui.notifications;
 
+import static android.content.Context.VIBRATOR_SERVICE;
+
 import android.annotation.SuppressLint;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.media.AudioAttributes;
+import android.media.MediaPlayer;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.os.VibratorManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +35,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.madcampweek1.MainActivity;
+import com.example.madcampweek1.R;
 import com.example.madcampweek1.databinding.FragmentDashboardBinding;
 import com.example.madcampweek1.databinding.FragmentTimerBinding;
 import com.example.madcampweek1.databinding.FragmentTimerDialogBinding;
@@ -44,6 +63,8 @@ public class TimerDialogFragment extends DialogFragment {
     private List<Map<String, String>> exercises = new ArrayList<>();
     private MyTimer myTimer;
     private ProgressBar progressBar;
+    private Vibrator vibrator ;
+    private MediaPlayer mediaPlayer;
 
 
     public static TimerDialogFragment getInstance(){
@@ -143,7 +164,8 @@ public class TimerDialogFragment extends DialogFragment {
 
         //임시 값 대입
         //initTemporary();
-
+        // 진동 객체 얻기
+        vibrator = (Vibrator) getContext().getSystemService(getContext().VIBRATOR_SERVICE);
         // 데이터 활용
         exerciseIndex = 0;
         textViewName.setText(routineName);
@@ -194,9 +216,13 @@ public class TimerDialogFragment extends DialogFragment {
         @Override
         public void onFinish() {
             cancel();
-            setTime("00:00:00");
-            //소리내기
+            setTime(0);
+            //진동 및 소리내기
+            beep();
+            //버전이 26이상이면
+            beepVib(5);
             //Toast.makeText(getContext(), "Timer End!", Toast.LENGTH_SHORT).show();
+
             //다음거 실행
             if (exerciseIndex == exercises.size() - 1) {
                 //루틴 내 최종에 다다름
@@ -264,7 +290,8 @@ public class TimerDialogFragment extends DialogFragment {
         return res;
     }
     public void setTime(String s){
-        progressBar.setProgress(100 * timerToInt(s) / timerToInt(exercises.get(exerciseIndex).get("time")) );
+        progressBar.setProgress(100 * (timerToInt(s)) / timerToInt(exercises.get(exerciseIndex).get("time")) );
+        setBarColor(exerciseIndex);
         textViewTimer.setText(timerFromInt(timerToInt(s)));
     }
     public void setTime(int time){
@@ -276,6 +303,66 @@ public class TimerDialogFragment extends DialogFragment {
     public void setReps(int reps){
         textViewReps.setText(Integer.toString(reps)+" reps");
     }
+    public void setBarColor(int index){
+        String[][] colorCombos = {
+                {"#FF0000", "#806B6B"},  // Red bar with dark reddish background
+                {"#00FF00", "#6B806B"},  // Green bar with dark greenish background
+                {"#FF00FF", "#806B80"},  // Magenta bar with dark purplish background
+                {"#FFFF00", "#80806B"},  // Yellow bar with dark yellowish background
+                {"#0000FF", "#6B6B80"},  // Blue bar with dark bluish background
+                {"#00FFFF", "#6B8080"},  // Cyan bar with dark cyanish background
+                {"#FFA500", "#8A5700"},  // Orange bar with dark orangish background
+                {"#008000", "#1F522E"},  // Dark green bar with dark greenish background
+                {"#800080", "#5E1A66"},  // Purple bar with dark purplish background
+                {"#FFFFFF", "#1A1A1A"}   // Black bar with dark grayish background
+        };
+        //Toast.makeText(getContext(), colorCombos[index%colorCombos.length][0]+colorCombos[index%colorCombos.length][1], Toast.LENGTH_SHORT).show();
+        setBarColor(colorCombos[index%colorCombos.length][0], colorCombos[index%colorCombos.length][1]);
+
+    }
+    public void setBarColor(String barColor, String backColor) {
+// ProgressBar의 progressBackgroundTint 변경
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            progressBar.setProgressBackgroundTintList(ColorStateList.valueOf(Color.parseColor(backColor)));
+        }
+
+// ProgressBar의 progressTint 변경
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            progressBar.setProgressTintList(ColorStateList.valueOf(Color.parseColor(barColor)));
+        }
+    }
+
+    private void beep() {
+        Toast.makeText(getContext(), "Beep", Toast.LENGTH_SHORT).show();
+        // 이전에 재생 중인 음악이 있다면 중지하고 리소스를 해제합니다
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+        }
+
+        // 새로운 타이머 시작을 알리는 알림음을 재생합니다
+        mediaPlayer = MediaPlayer.create(getContext(), R.raw.beepsound);
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                // 재생이 완료된 후에 수행할 동작
+                mediaPlayer.release(); // MediaPlayer 해제
+                mediaPlayer = null; // 객체 초기화
+            }
+        });
+        mediaPlayer.start(); // 재생 시작
+    }
+
+
+    public void beepVib(int last){
+        //Toast.makeText(getContext(), "BeepVib", Toast.LENGTH_SHORT).show();
+        if(Build.VERSION.SDK_INT >= 26) {
+            vibrator.vibrate(VibrationEffect.createOneShot(100 * last, 250));
+        } else {    //26보다 낮으면
+            vibrator.vibrate(100 * last);
+        }
+    }
+
     public void initTemporary(){
         //임시 값
         routineName = "Tmp Rt";
