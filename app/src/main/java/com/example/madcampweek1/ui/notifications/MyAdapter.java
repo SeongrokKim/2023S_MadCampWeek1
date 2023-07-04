@@ -1,11 +1,13 @@
 package com.example.madcampweek1.ui.notifications;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -48,24 +50,42 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
                 ExerciseItem exerciseItem = new ExerciseItem();
                 cardItem.getExerciseItemArrayList().add(exerciseItem);
                 exerciseAdapter.notifyDataSetChanged();
+
             }
         });
+
+        cardItem.setTitle(holder.editTextTitle);
+        cardItem.setCycles(holder.editTextCycles);
 
         holder.btnCheck.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                String title = cardItem.getEditTextTitle().getText().toString();
-                int cycles = Integer.parseInt(cardItem.getEditTextCycles().getText().toString());
+                String title = cardItem.getEditTextTitle();
+                int cycles = Integer.parseInt(cardItem.getEditTextCycles());
                 ArrayList<Map<String, String>> exercises = new ArrayList<>();
                 for (int i = 0; i < cardItem.getExerciseItemArrayList().size(); i++) {
+                    ExerciseAdapter.ExerciseViewHolder exerciseViewHolder = (ExerciseAdapter.ExerciseViewHolder) holder.recyclerViewExercises.findViewHolderForAdapterPosition(i);
                     ExerciseItem exerciseItem = cardItem.getExerciseItemArrayList().get(i);
+                    exerciseItem.setNameExercise(exerciseViewHolder.getNameExercise());
+                    exerciseItem.setTimeExerciseBun(exerciseViewHolder.getTimeExerciseBun());
+                    exerciseItem.setTimeExerciseCho(exerciseViewHolder.getTimeExerciseCho());
                     String exercise = exerciseItem.getNameExercise().getText().toString();
-                    String time = exerciseItem.getTimeExercise().getText().toString();
+                    String timeBun = exerciseItem.getTimeExerciseBun().getText().toString();
+                    if (timeBun.length() == 1){
+                        timeBun = "0"+timeBun;
+                    }
+                    String timeCho = exerciseItem.getTimeExerciseCho().getText().toString();
+                    if (timeCho.length() == 1){
+                        timeCho = "0"+timeCho;
+                    }
+                    String time = "00:"+timeBun+":"+timeCho;
                     Map<String, String> exMap = new HashMap<>();
                     exMap.put("name", exercise);
                     exMap.put("time", time);
                     exercises.add(exMap);
                 }
+
+
             }
         });
 
@@ -81,6 +101,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         private Button btnAddExercise;
         private Button btnCheck;
         private Button btnStart;
+        private EditText editTextTitle;
+        private EditText editTextCycles;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -88,6 +110,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             btnAddExercise = itemView.findViewById(R.id.btnAddExercise);
             btnCheck = itemView.findViewById(R.id.btnCheck);
             btnStart = itemView.findViewById(R.id.btnStart);
+            editTextCycles = itemView.findViewById(R.id.editTextNumOfCycles);
+            editTextTitle = itemView.findViewById(R.id.editTextTitle);
         }
     }
 }
