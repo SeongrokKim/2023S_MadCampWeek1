@@ -42,5 +42,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <Button
+        android:id="@+id/button_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="tmp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/button_gallery_add_line"
+        tools:layout_editor_absoluteY="28dp" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

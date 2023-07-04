@@ -1,55 +1,39 @@
 package com.example.madcampweek1.ui.dashboard;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.pm.PackageManager;
-import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
-import android.net.ipsec.ike.SaProposal;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.text.BoringLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.Space;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.madcampweek1.R;
 import com.example.madcampweek1.databinding.FragmentDashboardBinding;
+import com.example.madcampweek1.ui.notifications.TimerDialogFragment;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.widget.ImageView;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,6 +51,7 @@ public class DashboardFragment extends Fragment {
     private final String TAG = "DashboardFragment";
     private DashboardViewModel dashboardViewModel ;
     private Button addButton;
+    private Button timerButton;
     private TextView nolText;
     private RecyclerView recyclerViewGallery ;
     private List<Map<String, String>> dataList;
@@ -95,7 +80,7 @@ public class DashboardFragment extends Fragment {
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 4);
         recyclerViewGallery.setLayoutManager(layoutManager);
         dataList = dashboardViewModel.getDataList();
-        Toast.makeText(getContext(), Integer.toString(dataList.size()), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(), Integer.toString(dataList.size()), Toast.LENGTH_SHORT).show();
 
         if (dataList.size() == 0){
 
@@ -142,6 +127,79 @@ public class DashboardFragment extends Fragment {
         });
 
         //Toast.makeText(getContext(), Integer.toString(lineMaxSize), Toast.LENGTH_SHORT).show();
+
+
+
+        timerButton = binding.buttonTimer;
+        timerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String routineName = "Tmp Rt";
+                int reps = 2;
+                List<Map<String, String>> exercises = new ArrayList<>();
+                Map<String, String> exMap = new HashMap<>();
+                exMap.put("name", "Exc1");
+                exMap.put("time", "00:01:03");
+                exercises.add(exMap);
+                Map<String, String> exMap2 = new HashMap<>();
+                exMap2.put("name", "Exc2");
+                exMap2.put("time", "00:00:02");
+                exercises.add(exMap2);
+                Map<String, String> exMap3 = new HashMap<>();
+                exMap3.put("name", "Exc3");
+                exMap3.put("time", "00:00:03");
+                exercises.add(exMap3);
+                TimerDialogFragment timerDialogFragment = TimerDialogFragment.getInstance(routineName, reps, exercises);
+                //TimerDialogFragment timerDialogFragment = TimerDialogFragment.getInstance();
+                timerDialogFragment.show(getChildFragmentManager(), TimerDialogFragment.TAG_TIMER_DIALOG);
+//                //// PopupWindow는 날린다.
+//                //인수 설정 (수정필요 Ward)
+//                String routineName = "Tmp Rt";
+//                int reps = 3;
+//                List<Map<String, String>> exercises = new ArrayList<>();
+//                Map<String, String> exMap = new HashMap<>();
+//                exMap.put("name", "TmpEx");
+//                exMap.put("time", "00:12:34");
+//                //여기까지
+//
+//                //POPup 선언
+//                View popupView = getLayoutInflater().inflate(R.layout.fragment_timer, null);
+//                PopupWindow mPopupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+//                ((MainActivity)getActivity()).setPopupWindow(mPopupWindow);
+//
+//                //Toast.makeText(getContext(), "!3", Toast.LENGTH_SHORT).show();
+//
+//                // 데이터 패키징
+////                Bundle bundle = new Bundle();
+////                bundle.putString("routineName", routineName); // String 데이터 전달
+////                bundle.putInt("reps", reps); // int 데이터 전달
+////                bundle.putSerializable("exercises", (Serializable) exercises); // List<Map<String, String>> 데이터 전달
+//
+//                // TimerFragment 인스턴스 생성 및 번들 전달
+//                TimerFragment fragment = new TimerFragment();
+//                //fragment.setArguments(bundle);
+//
+//                //Toast.makeText(getContext(), fragment.getArguments().getString("routineName") + Integer.toString(fragment.getArguments().getInt("reps")), Toast.LENGTH_SHORT).show();
+//
+//                // Fragment를 추가하기 위해 FragmentManager 인스턴스 가져오기
+//                FragmentManager fragmentManager = getChildFragmentManager();
+//                // FragmentTransaction 시작
+//                FragmentTransaction transaction = fragmentManager.beginTransaction();
+//                // Transaction에 TimerFragment 추가하고 커밋
+//                transaction.replace(R.id.fragmentContainerView, fragment);
+//                transaction.commit();
+//
+//                // PopupWindow 설정
+//                ColorDrawable colorDrawable = new ColorDrawable(Color.BLACK); // 검은색 배경
+//                mPopupWindow.setBackgroundDrawable(colorDrawable);
+//
+//                mPopupWindow.setFocusable(true);
+//                mPopupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+//                //Toast.makeText(getContext(), "되냐?", Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
 
         dashboardViewModel.getNumLines().observe(getViewLifecycleOwner(), nolText::setText);
         //dashboardViewModel.getDataListLive().observe(getViewLifecycleOwner(), )
