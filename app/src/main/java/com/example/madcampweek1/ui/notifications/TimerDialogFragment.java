@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +43,7 @@ public class TimerDialogFragment extends DialogFragment {
     private String routineName = "Err";
     private List<Map<String, String>> exercises = new ArrayList<>();
     private MyTimer myTimer;
+    private ProgressBar progressBar;
 
 
     public static TimerDialogFragment getInstance(){
@@ -56,7 +58,25 @@ public class TimerDialogFragment extends DialogFragment {
         e.routineName = routineName;
         return e;
     }
+    @Override
+    public void onStart() {
+        super.onStart();
+        // 다이얼로그의 크기를 디바이스 크기의 95%로 설정
+        if (getDialog() != null) {
+            // 디바이스의 가로 크기 가져오기
+            int deviceWidth = getResources().getDisplayMetrics().widthPixels;
+            // 디바이스의 세로 크기 가져오기
+            int deviceHeight = getResources().getDisplayMetrics().heightPixels;
 
+            // 다이얼로그의 가로 크기 설정 (디바이스 가로 크기의 95%)
+            int dialogWidth = (int) (deviceWidth * 0.95);
+            // 다이얼로그의 세로 크기 설정 (디바이스 세로 크기의 95%)
+            int dialogHeight = (int) (deviceHeight * 0.95);
+
+            // 다이얼로그의 크기를 설정
+            getDialog().getWindow().setLayout(dialogWidth, dialogHeight);
+        }
+    }
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
@@ -73,11 +93,12 @@ public class TimerDialogFragment extends DialogFragment {
         buttonSkip = binding.buttonSkip;
         buttonStart = binding.buttonStart;
         buttonStop = binding.buttonStop;
+        progressBar = binding.progressbar;
 
         binding.buttonExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                myTimer.cancel();
+                if(myTimer!=null)myTimer.cancel();
                 // PopupWindow를 닫기
                 dismiss();
             }
@@ -124,11 +145,11 @@ public class TimerDialogFragment extends DialogFragment {
         //initTemporary();
 
         // 데이터 활용
+        exerciseIndex = 0;
         textViewName.setText(routineName);
         textViewExercise.setText(exercises.get(0).get("name"));
-        textViewTimer.setText(exercises.get(0).get("time"));
-        textViewReps.setText(Integer.toString(reps));
-        exerciseIndex = 0;
+        setTime(exercises.get(0).get("time"));
+        setReps(reps);
         setCancelable(false);
         return root;
     }
@@ -138,7 +159,8 @@ public class TimerDialogFragment extends DialogFragment {
 
     private void skipTimer(){
         setTime(0);
-        myTimer.cancel();
+        if(myTimer!=null)
+            myTimer.cancel();
         myTimer = new MyTimer(0,1000);
         myTimer.start();
     }
@@ -150,7 +172,7 @@ public class TimerDialogFragment extends DialogFragment {
         }
 
         public MyTimer(int time) {
-            super(time * 1000, 1000);
+            this(time * 1000, 1000);
         }
         public MyTimer() {
             this(timerToInt());
@@ -162,16 +184,17 @@ public class TimerDialogFragment extends DialogFragment {
             restTime -= 1;
             //Toast.makeText(getContext(), Integer.toString(restTime), Toast.LENGTH_SHORT).show();
 
-            textViewTimer.setText(timerFromInt(restTime));
-            if (restTime == -1) {
+            setTime(restTime);
+            if (restTime == 0) {
                 onFinish();
             }
+
         }
 
         @Override
         public void onFinish() {
             cancel();
-            textViewTimer.setText("00:00:00");
+            setTime("00:00:00");
             //소리내기
             //Toast.makeText(getContext(), "Timer End!", Toast.LENGTH_SHORT).show();
             //다음거 실행
@@ -186,7 +209,7 @@ public class TimerDialogFragment extends DialogFragment {
                     exerciseIndex = 0;
                     reps -= 1;
                     if(reps<0) reps = 0; //0일때 무한반복용
-                    textViewReps.setText(Integer.toString(reps));
+                    setReps(reps);
                     //Toast.makeText(getContext(),Integer.toString(reps), Toast.LENGTH_SHORT ).show();
 
                     startOnePart();
@@ -203,8 +226,8 @@ public class TimerDialogFragment extends DialogFragment {
     public void startOnePart(){
         //Toast.makeText(getContext(),Integer.toString(exerciseIndex), Toast.LENGTH_SHORT ).show();
         textViewExercise.setText(exercises.get(exerciseIndex).get("name"));
-        textViewTimer.setText(exercises.get(exerciseIndex).get("time"));
-        myTimer.cancel();
+        setTime(exercises.get(exerciseIndex).get("time"));
+        if(myTimer!=null)myTimer.cancel();
         myTimer = new MyTimer(timerToInt());
         myTimer.start();
 
@@ -212,22 +235,47 @@ public class TimerDialogFragment extends DialogFragment {
     }
     public int timerToInt(String timerViewText){
         String[] times = timerViewText.split(":");
-        return Integer.parseInt(times[0]) * 3600 + Integer.parseInt(times[1]) * 60 + Integer.parseInt(times[2]) ;
+        int res;
+        switch (times.length){
+            case 3:
+                res = Integer.parseInt(times[0]) * 3600 + Integer.parseInt(times[1]) * 60 + Integer.parseInt(times[2]) ;
+                break;
+            case 2:
+                res = Integer.parseInt(times[0]) * 60 + Integer.parseInt(times[1]) ;
+                break;
+            default:
+                res = Integer.parseInt(times[0]) ;
+                break;
+        }
+        return res;
     }
     public int timerToInt(){
         return timerToInt((String)textViewTimer.getText());
     }
     @SuppressLint("DefaultLocale")
     public String timerFromInt(int time){
-        return String.format("%02d:%02d:%02d",time/3600, (time%3600)/60, time%60);
+        String res;
+        if (time/3600 > 0)
+            res = String.format("%d:%02d:%02d",time/3600, (time%3600)/60, time%60);
+        else if(time / 60 > 0)
+            res = String.format("%d:%02d", (time%3600)/60, time%60);
+        else
+            res = String.format("%d", time%60);
+        return res;
+    }
+    public void setTime(String s){
+        progressBar.setProgress(100 * timerToInt(s) / timerToInt(exercises.get(exerciseIndex).get("time")) );
+        textViewTimer.setText(timerFromInt(timerToInt(s)));
     }
     public void setTime(int time){
-        textViewTimer.setText(timerFromInt(time));
+        setTime(timerFromInt(time));
     }
     public int getReps(){
-        return Integer.parseInt((String) textViewReps.getText());
+        return Integer.parseInt(((String) textViewReps.getText()).split(" ")[0]);
     }
-
+    public void setReps(int reps){
+        textViewReps.setText(Integer.toString(reps)+" reps");
+    }
     public void initTemporary(){
         //임시 값
         routineName = "Tmp Rt";
