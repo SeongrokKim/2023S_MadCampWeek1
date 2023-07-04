@@ -28,6 +28,8 @@ public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.Exerci
     @Override
     public void onBindViewHolder(@NonNull ExerciseViewHolder holder, int position) {
         ExerciseItem exerciseItem = exerciseItemArrayList.get(position);
+
+        holder.setExerciseItem(exerciseItem);
     }
 
     @Override
@@ -35,14 +37,47 @@ public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.Exerci
         return exerciseItemArrayList.size();
     }
 
-    class ExerciseViewHolder extends RecyclerView.ViewHolder {
-        EditText editTextExercise;
-        EditText editTextTime;
+    public class ExerciseViewHolder extends RecyclerView.ViewHolder {
+        private EditText nameExercise;
+        private EditText timeExerciseCho;
+        private EditText timeExerciseBun;
+        private ExerciseItem exerciseItem;
 
         public ExerciseViewHolder(@NonNull View itemView) {
             super(itemView);
-            editTextExercise = itemView.findViewById(R.id.editTextExercise);
-            editTextTime = itemView.findViewById(R.id.editTextTime);
+            nameExercise = itemView.findViewById(R.id.nameExercise);
+            timeExerciseCho = itemView.findViewById(R.id.timeExerciseBun);
+            timeExerciseBun = itemView.findViewById(R.id.timeExerciseCho);
+        }
+        public ExerciseItem getExerciseItem(){
+            return exerciseItem;
+        }
+
+        public void setExerciseItem(ExerciseItem exerciseItem) {
+            this.exerciseItem = exerciseItem;
+        }
+
+        public EditText getNameExercise() {
+            return nameExercise;
+        }
+
+        public void setNameExercise(EditText nameExercise) {
+            this.nameExercise = nameExercise;
+        }
+
+        public EditText getTimeExerciseBun() {
+            return timeExerciseBun;
+        }
+
+        public void setTimeExerciseBun(EditText timeExercise) {
+            this.timeExerciseBun = timeExercise;
+        }
+        public EditText getTimeExerciseCho() {
+            return timeExerciseCho;
+        }
+
+        public void setTimeExerciseCho(EditText timeExercise) {
+            this.timeExerciseCho = timeExercise;
         }
     }
 }

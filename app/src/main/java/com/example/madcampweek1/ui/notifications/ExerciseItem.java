@@ -4,7 +4,8 @@ import android.widget.EditText;
 
 public class ExerciseItem {
     private EditText nameExercise;
-    private EditText timeExercise;
+    private EditText timeExerciseCho;
+    private EditText timeExerciseBun;
 
     public ExerciseItem() {
     }
@@ -17,11 +18,18 @@ public class ExerciseItem {
         this.nameExercise = nameExercise;
     }
 
-    public EditText getTimeExercise() {
-        return timeExercise;
+    public EditText getTimeExerciseBun() {
+        return timeExerciseBun;
     }
 
-    public void setTimeExercise(EditText timeExercise) {
-        this.timeExercise = timeExercise;
+    public void setTimeExerciseBun(EditText timeExercise) {
+        this.timeExerciseBun = timeExercise;
+    }
+    public EditText getTimeExerciseCho() {
+        return timeExerciseCho;
+    }
+
+    public void setTimeExerciseCho(EditText timeExercise) {
+        this.timeExerciseCho = timeExercise;
     }
 }
