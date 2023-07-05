@@ -132,8 +132,7 @@ public class TimerDialogFragment extends DialogFragment {
                 // Skip 버튼 클릭 이벤트 처리
                 Toast.makeText(getContext(), "OnclickSkip", Toast.LENGTH_SHORT).show();
 
-                if(myTimer != null)
-                    skipTimer();
+                if(myTimer != null) skipTimer();
             }
         });
 
