@@ -51,7 +51,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             public void onClick(View v) {
                 ExerciseItem exerciseItem = new ExerciseItem();
                 cardItem.getExerciseItemArrayList().add(exerciseItem);
-                exerciseAdapter.notifyDataSetChanged();
+                exerciseAdapter.notifyItemInserted(cardItem.getExerciseItemArrayList().size()-1);
 
             }
         });
@@ -94,6 +94,15 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             }
         });
 
+        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cardItemArrayList.remove(position);
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position, cardItemArrayList.size());
+            }
+        });
+
     }
 
     @Override
@@ -105,7 +114,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         private RecyclerView recyclerViewExercises;
         private Button btnAddExercise;
         private Button btnCheck;
-        private Button btnStart;
+        private Button btnDelete;
         private EditText editTextTitle;
         private EditText editTextCycles;
 
@@ -114,7 +123,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             recyclerViewExercises = itemView.findViewById(R.id.recyclerViewExercises);
             btnAddExercise = itemView.findViewById(R.id.btnAddExercise);
             btnCheck = itemView.findViewById(R.id.btnCheck);
-            btnStart = itemView.findViewById(R.id.btnStart);
+            btnDelete = itemView.findViewById(R.id.btnDelete);
             editTextCycles = itemView.findViewById(R.id.editTextNumOfCycles);
             editTextTitle = itemView.findViewById(R.id.editTextTitle);
         }

@@ -29,7 +29,7 @@ public class NotificationsFragment extends Fragment {
 
     private FragmentNotificationsBinding binding;
     private RecyclerView recyclerViewRoutines;
-    private ArrayList<CardItem> cardItemArrayList = new ArrayList<>();
+    private static ArrayList<CardItem> cardItemArrayList;
     private Button btnAddRoutine;
     private MyAdapter adapter;
 
@@ -39,12 +39,18 @@ public class NotificationsFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentNotificationsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        if (cardItemArrayList == null){
+            cardItemArrayList = new ArrayList<CardItem>();
+            CardItem cardItem = new CardItem();
+            cardItemArrayList.add(cardItem);
+        }
         btnAddRoutine = root.findViewById(R.id.btnAddRoutine);
         recyclerViewRoutines = root.findViewById(R.id.recyclerViewRoutines);
-
-        recyclerViewRoutines.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        recyclerViewRoutines.setLayoutManager(new LinearLayoutManager(getActivity()));
         adapter = new MyAdapter(cardItemArrayList);
         recyclerViewRoutines.setAdapter(adapter);
+
 
         // '루틴 추가' 버튼을 클릭하면 다이얼로그를 띄웁니다.
         binding.btnAddRoutine.setOnClickListener(new View.OnClickListener() {
@@ -52,8 +58,7 @@ public class NotificationsFragment extends Fragment {
             public void onClick(View v) {
                 CardItem cardItem = new CardItem();
                 cardItemArrayList.add(cardItem);
-                adapter.notifyDataSetChanged();
-
+                adapter.notifyItemInserted(cardItemArrayList.size()-1);
             }
         });
         return root;
