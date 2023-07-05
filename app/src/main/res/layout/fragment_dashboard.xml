@@ -12,10 +12,8 @@
         android:layout_height="wrap_content"
         android:text="Make New Photo!"
         android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/text_number_of_lines"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.583" />
 
     <TextView
@@ -25,12 +23,12 @@
         android:ems="10"
         android:inputType="text"
         android:text="Number of Lines : 1"
+        android:visibility="invisible"
 
-        app:layout_constraintBottom_toTopOf="@+id/recyclerView_gallery"
+        app:layout_constraintTop_toBottomOf="@+id/button_gallery_add_line"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.66" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -39,6 +37,7 @@
         android:layout_height="0dp"
         android:layout_marginBottom="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_number_of_lines"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.8"
         app:layout_constraintHorizontal_bias="0.0"
