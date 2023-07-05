@@ -106,7 +106,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
                     } else if (exerciseItem.getTimeExerciseCho().getText().toString().length() == 2) {
                         timeCho = exerciseItem.getTimeExerciseCho().getText().toString();
                     }
-                    String time = "00:"+timeCho+":"+timeBun;
+                    String time = "00:"+timeBun+":"+timeCho;
                     Toast.makeText(v.getContext(), time, Toast.LENGTH_SHORT);
                     Map<String, String> exMap = new HashMap<>();
                     exMap.put("name", exercise);
@@ -129,6 +129,18 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
                 notifyItemRangeChanged(position, cardItemArrayList.size());
             }
         });
+        holder.btnRepsPlus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                holder.changeRep(+1);
+            }
+        });
+        holder.btnRepsMinus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                holder.changeRep(-1);
+            }
+        });
 
     }
 
@@ -144,7 +156,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         private Button btnDelete;
         private EditText editTextTitle;
         private EditText editTextCycles;
-
+        private Button btnRepsPlus;
+        private Button btnRepsMinus;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             recyclerViewExercises = itemView.findViewById(R.id.recyclerViewExercises);
@@ -153,6 +166,24 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             btnDelete = itemView.findViewById(R.id.btnDelete);
             editTextCycles = itemView.findViewById(R.id.editTextNumOfCycles);
             editTextTitle = itemView.findViewById(R.id.editTextTitle);
+            btnRepsPlus = itemView.findViewById(R.id.btnRepsPlus);
+            btnRepsMinus = itemView.findViewById(R.id.btnRepsMinus);
+        }
+        public int getRep() {
+            String tp = editTextCycles.getText().toString();
+            if (tp.equalsIgnoreCase("")) {
+                return -1;
+            } else {
+                return Integer.parseInt(tp);
+            }
+        }
+
+        public void setRep(int bun) {
+            editTextCycles.setText(Integer.toString(Math.max(0, bun)));
+        }
+
+        public void changeRep(int diff) {
+            setRep(diff + getRep());
         }
     }
 }

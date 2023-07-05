@@ -89,12 +89,34 @@
                     android:layout_alignBottom="@+id/editTextNumOfCycles"
                     android:layout_marginBottom="8dp"
                     android:text="반복 횟수 설정: " />
-
+                <Button
+                    android:id="@+id/btnRepsPlus"
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/editTextNumOfCycles"
+                    android:layout_toRightOf="@+id/editTextNumOfCycles"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="10dp"
+                    android:text="+"
+                    android:textSize="3sp" />
                 <EditText
                     android:id="@+id/editTextNumOfCycles"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/textViewNumOfCycles"/>
+                    android:layout_toRightOf="@+id/btnRepsMinus"
+                    android:layout_marginLeft="10dp"
+                    android:inputType="number"/>
+
+                <Button
+                    android:id="@+id/btnRepsMinus"
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/editTextNumOfCycles"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_toRightOf="@+id/textViewNumOfCycles"
+                    android:text="ㅡ"
+                    android:textSize="3sp" />
 
                 <Button
                     android:id="@+id/btnCheck"
