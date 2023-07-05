@@ -1,4 +1,6 @@
 # Routine Timer
+![image](https://github.com/SeongrokKim/2023S_MadCampWeek1/assets/110150859/541e0333-c0e1-45cf-9bcf-9592d31f7dea)
+
 ---
 `MadCamp Week1`
 - 연락처, 갤러리, 루틴 타이머 세 탭으로 이루어진 Android 기반 어플리케이션입니다.
