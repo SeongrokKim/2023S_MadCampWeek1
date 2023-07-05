@@ -130,7 +130,7 @@ public class TimerDialogFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 // Skip 버튼 클릭 이벤트 처리
-                Toast.makeText(getContext(), "OnclickSkip", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "OnclickSkip", Toast.LENGTH_SHORT).show();
 
                 if(myTimer != null) skipTimer();
             }
@@ -141,7 +141,7 @@ public class TimerDialogFragment extends DialogFragment {
             public void onClick(View v) {
                 // Start 버튼 클릭 이벤트 처리
                 // ...
-                Toast.makeText(getContext(), "OnclickStart", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "OnclickStart", Toast.LENGTH_SHORT).show();
                 if(myTimer!=null)
                     myTimer.cancel();
                 myTimer = new MyTimer();
@@ -155,7 +155,7 @@ public class TimerDialogFragment extends DialogFragment {
             public void onClick(View v) {
                 // Stop 버튼 클릭 이벤트 처리
                 // ...
-                Toast.makeText(getContext(), "OnclickStop", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "OnclickStop", Toast.LENGTH_SHORT).show();
                 if(myTimer != null)
                     stopTimer();
             }
@@ -228,7 +228,7 @@ public class TimerDialogFragment extends DialogFragment {
 
                 if (reps == 1) {
                     //축하 알림
-                    Toast.makeText(getContext(), "REALLY END!", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(), "REALLY END!", Toast.LENGTH_SHORT).show();
                 } else {
                     //reps 남음
                     exerciseIndex = 0;
@@ -332,7 +332,7 @@ public class TimerDialogFragment extends DialogFragment {
     }
 
     private void beep() {
-        Toast.makeText(getContext(), "Beep", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(), "Beep", Toast.LENGTH_SHORT).show();
         // 이전에 재생 중인 음악이 있다면 중지하고 리소스를 해제합니다
         if (mediaPlayer != null) {
             mediaPlayer.stop();

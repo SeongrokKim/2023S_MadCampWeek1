@@ -57,6 +57,8 @@ public class NotificationsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 CardItem cardItem = new CardItem();
+                cardItem.setTitle(null);
+                cardItem.setCycles(null);
                 cardItemArrayList.add(cardItem);
                 adapter.notifyItemInserted(cardItemArrayList.size()-1);
             }
