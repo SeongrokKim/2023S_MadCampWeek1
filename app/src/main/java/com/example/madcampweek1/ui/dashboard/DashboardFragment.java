@@ -220,7 +220,9 @@ public class DashboardFragment extends Fragment {
 //            // 사용이 끝난 Bitmap은 메모리 해제
 //            originalBitmap.recycle();
 //            holder.imageView.setImageBitmap(thumbnailBitmap);
-
+            // 스트로크 스타일 설정
+            holder.imageView.setBackgroundResource(R.drawable.stroke_background);
+            holder.textView.setBackgroundResource(R.drawable.stroke_background);
             holder.imageView.setImageResource(getResources().getIdentifier(filePath, "drawable", context.getPackageName()));
             //holder.photoIndex = position;
             //Toast.makeText(getContext(), filePath, Toast.LENGTH_SHORT).show();
