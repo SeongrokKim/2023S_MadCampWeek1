@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -13,28 +14,22 @@ import androidx.fragment.app.Fragment;
 
 import com.example.madcampweek1.R;
 import com.example.madcampweek1.databinding.FragmentImageAugmentBinding;
+
+import java.util.Map;
+
 public class ImageAugmentFragment extends Fragment {
     private static final String ARG_IMAGE_RESOURCE_ID = "imageResourceId";
-
     private int imageResourceId;
+    private String photoName;
+    private String photoPath;
     private FragmentImageAugmentBinding binding;
 
-    public static ImageAugmentFragment newInstance(String imagePath) {
+    public static ImageAugmentFragment newInstance(Map<String, String> map) {
         ImageAugmentFragment fragment = new ImageAugmentFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_IMAGE_RESOURCE_ID, imagePath);
-        fragment.setArguments(args);
+        fragment.photoName = map.get("name");
+        fragment.photoPath = map.get("path");
         return fragment;
     }
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Toast.makeText(getContext(), "first", Toast.LENGTH_SHORT).show();
-        if (getArguments() != null) {
-            imageResourceId = getArguments().getInt(ARG_IMAGE_RESOURCE_ID);
-        }
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -42,19 +37,13 @@ public class ImageAugmentFragment extends Fragment {
         binding = FragmentImageAugmentBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         ImageView imageView = binding.imageView;
-        if (getArguments() != null) {
-            imageResourceId = getArguments().getInt(ARG_IMAGE_RESOURCE_ID);
-        }
-
+        TextView textView = binding.textView;
         // imageResourceId를 사용하여 이미지를 로드하고 ImageView에 설정하는 로직을 구현
-        imageView.setImageResource(imageResourceId);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 프래그먼트를 종료하여 이전 화면으로 돌아감
-                requireActivity().getSupportFragmentManager().popBackStack();
-            }
-        });
+        textView.setText(photoName);
+        //외부 말고 내부만
+        //holder.imageView = pathToImageView(filePath);
+        imageView.setImageResource(getResources().getIdentifier(photoPath, "drawable", getContext().getPackageName()));
+
 
         return root;
 
