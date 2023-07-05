@@ -2,23 +2,9 @@ package com.example.madcampweek1.ui.dashboard;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentResolver;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.res.AssetManager;
-import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
-import android.net.ipsec.ike.SaProposal;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
-import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.BoringLayout;
 import android.util.Log;
@@ -26,46 +12,30 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
-import android.widget.Space;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.madcampweek1.MainActivity;
 import com.example.madcampweek1.R;
 import com.example.madcampweek1.databinding.FragmentDashboardBinding;
 import com.example.madcampweek1.ui.notifications.TimerDialogFragment;
-import com.example.madcampweek1.ui.notifications.TimerFragment;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.widget.ImageView;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -340,5 +310,4 @@ public class DashboardFragment extends Fragment {
         return null;
     }
 }
-
 

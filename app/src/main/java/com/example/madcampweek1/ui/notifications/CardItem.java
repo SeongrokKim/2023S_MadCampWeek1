@@ -1,27 +1,43 @@
 package com.example.madcampweek1.ui.notifications;
 
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+
+import com.example.madcampweek1.R;
+
+import java.util.ArrayList;
+
 public class CardItem {
-    String exercise;
-    String time;
+    private ArrayList<ExerciseItem> exerciseItemArrayList;
+    private EditText title;
+    private EditText cycles;
 
-    public CardItem(String exercise, String time){
-        this.exercise = exercise;
-        this.time = time;
+    public CardItem() {
+        exerciseItemArrayList = new ArrayList<ExerciseItem>();
     }
 
-    public  String getExercise(){
-        return exercise;
+    public void setTitle(EditText title) {
+        this.title = title;
     }
 
-    public void setExercise(String exercise){
-        this.exercise = exercise;
+    public void setCycles(EditText cycles) {
+        this.cycles = cycles;
     }
 
-    public  String getTime(){
-        return time;
+    public void setExerciseItemArrayList(ArrayList<ExerciseItem> exerciseItemArrayList) {
+        this.exerciseItemArrayList = exerciseItemArrayList;
     }
 
-    public void setTime(String time){
-        this.time = time;
+    public ArrayList<ExerciseItem> getExerciseItemArrayList() {
+        return exerciseItemArrayList;
+    }
+    public String getEditTextTitle() {
+        return title.getText().toString();
+    }
+    public String getEditTextCycles() {
+        return cycles.getText().toString();
     }
 }
