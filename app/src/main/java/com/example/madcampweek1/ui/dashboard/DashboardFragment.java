@@ -1,10 +1,13 @@
 package com.example.madcampweek1.ui.dashboard;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.provider.Settings;
 import android.text.BoringLayout;
 import android.util.Log;
@@ -184,7 +187,7 @@ public class DashboardFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
+        public void onBindViewHolder(ViewHolder holder, @SuppressLint("RecyclerView") int position) {
             // 아이템 데이터 설정
 
             Map<String,String> dataItem = dataList.get(position);

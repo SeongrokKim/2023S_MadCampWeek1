@@ -86,7 +86,7 @@ public class ImageAugmentDialogFragment extends DialogFragment {
         pagerAdapter = new ImageAugmentPagerAdapter(getChildFragmentManager(), getLifecycle(), dataList);
 
         viewPager.setAdapter(pagerAdapter);
-        changePhoto(photoIndex - viewPager.getCurrentItem());
+        setPhoto(photoIndex);
         // 왼쪽 버튼 클릭 이벤트 처리
         leftButton.setOnClickListener(new View.OnClickListener() {
             @Override
