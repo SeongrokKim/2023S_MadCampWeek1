@@ -62,8 +62,20 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         holder.btnCheck.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                String title = cardItem.getEditTextTitle();
-                int cycles = Integer.parseInt(cardItem.getEditTextCycles());
+                String title;
+                int cycles;
+                if (cardItem.getEditTextTitle().getText().toString() == null){
+                    title = "루틴";
+                }
+                else {
+                    title = cardItem.getEditTextTitle().getText().toString();
+                }
+                if (cardItem.getEditTextCycles().getText().toString() == null){
+                    cycles = 1;
+                }
+                else{
+                    cycles = Integer.parseInt(cardItem.getEditTextCycles().getText().toString());
+                }
                 ArrayList<Map<String, String>> exercises = new ArrayList<>();
                 for (int i = 0; i < cardItem.getExerciseItemArrayList().size(); i++) {
                     ExerciseAdapter.ExerciseViewHolder exerciseViewHolder = (ExerciseAdapter.ExerciseViewHolder) holder.recyclerViewExercises.findViewHolderForAdapterPosition(i);
@@ -71,14 +83,28 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
                     exerciseItem.setNameExercise(exerciseViewHolder.getNameExercise());
                     exerciseItem.setTimeExerciseBun(exerciseViewHolder.getTimeExerciseBun());
                     exerciseItem.setTimeExerciseCho(exerciseViewHolder.getTimeExerciseCho());
-                    String exercise = exerciseItem.getNameExercise().getText().toString();
-                    String timeBun = exerciseItem.getTimeExerciseBun().getText().toString();
-                    if (timeBun.length() == 1){
-                        timeBun = "0"+timeBun;
+                    String exercise = "";
+                    if (exerciseItem.getNameExercise().getText().toString() == null){
+                        exercise = "운동" + String.valueOf(i+1);
                     }
-                    String timeCho = exerciseItem.getTimeExerciseCho().getText().toString();
-                    if (timeCho.length() == 1){
-                        timeCho = "0"+timeCho;
+                    else{
+                        exercise = exerciseItem.getNameExercise().getText().toString();
+                    }
+                    String timeBun = "00";
+                    if (exerciseItem.getTimeExerciseBun().getText().toString() == null){
+                        timeBun = "00";
+                    } else if (exerciseItem.getTimeExerciseBun().getText().toString().length() == 1) {
+                        timeBun = "0"+exerciseItem.getTimeExerciseBun().getText().toString();
+                    } else if (exerciseItem.getTimeExerciseBun().getText().toString().length() == 2) {
+                        timeBun = exerciseItem.getTimeExerciseBun().getText().toString();
+                    }
+                    String timeCho = "00";
+                    if (exerciseItem.getTimeExerciseCho().getText() == null){
+                        timeCho = "00";
+                    } else if (exerciseItem.getTimeExerciseCho().getText().toString().length() == 1) {
+                        timeCho = "0"+exerciseItem.getTimeExerciseCho().getText().toString();
+                    } else if (exerciseItem.getTimeExerciseCho().getText().toString().length() == 2) {
+                        timeCho = exerciseItem.getTimeExerciseCho().getText().toString();
                     }
                     String time = "00:"+timeCho+":"+timeBun;
                     Map<String, String> exMap = new HashMap<>();

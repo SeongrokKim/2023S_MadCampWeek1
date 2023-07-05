@@ -16,7 +16,9 @@ public class CardItem {
     private EditText cycles;
 
     public CardItem() {
-        exerciseItemArrayList = new ArrayList<ExerciseItem>();
+        this.exerciseItemArrayList = new ArrayList<ExerciseItem>();
+        this.title = getEditTextTitle();
+        this.cycles = getEditTextCycles();
     }
 
     public void setTitle(EditText title) {
@@ -34,10 +36,10 @@ public class CardItem {
     public ArrayList<ExerciseItem> getExerciseItemArrayList() {
         return exerciseItemArrayList;
     }
-    public String getEditTextTitle() {
-        return title.getText().toString();
+    public EditText getEditTextTitle() {
+        return title;
     }
-    public String getEditTextCycles() {
-        return cycles.getText().toString();
+    public EditText getEditTextCycles() {
+        return cycles;
     }
 }

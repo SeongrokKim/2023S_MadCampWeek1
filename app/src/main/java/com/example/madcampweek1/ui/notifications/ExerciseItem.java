@@ -8,6 +8,9 @@ public class ExerciseItem {
     private EditText timeExerciseBun;
 
     public ExerciseItem() {
+        nameExercise = getNameExercise();
+        timeExerciseBun = getTimeExerciseBun();
+        timeExerciseCho = getTimeExerciseCho();
     }
 
     public EditText getNameExercise() {
