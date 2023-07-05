@@ -6,11 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".ui.dashboard.DashboardFragment">
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/button_gallery_add_line"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Make New Photo!"
+        android:background="@drawable/solid_button"
+        android:textColor="#FFFFFF"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/text_number_of_lines"
         app:layout_constraintEnd_toEndOf="parent"

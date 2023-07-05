@@ -18,10 +18,14 @@
             android:maxLines="1"
             android:singleLine="true" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/buttonSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/solid_button"
+            android:minWidth="50dp"
+            android:minHeight="30dp"
+            android:textColor="#FFFFFF"
             android:text="검색" />
     </LinearLayout>
 
@@ -32,11 +36,15 @@
         android:layout_height="match_parent"
         tools:context=".ui.home.HomeFragment">
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/buttonAddContact"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:text="새 연락처 추가"
+            android:background="@drawable/solid_button"
+            android:textColor="#FFFFFF"
+            android:minWidth="50dp"
+            android:minHeight="30dp"
             app:layout_constraintBottom_toTopOf="@id/recyclerViewContacts"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"

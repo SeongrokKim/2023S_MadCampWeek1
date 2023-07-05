@@ -6,7 +6,7 @@
         android:id="@+id/nameItem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#0000ff"
+        android:textColor="#000000"
         android:textSize="20dp" />
 
     <TextView
@@ -15,5 +15,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/nameItem"
         android:layout_alignLeft="@+id/nameItem"
+        android:textColor="#787878"
         android:textSize="15dp" />
 </RelativeLayout>

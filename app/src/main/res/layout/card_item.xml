@@ -27,7 +27,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="루틴" />
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnDelete"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
@@ -67,12 +67,16 @@
                 android:layout_gravity="center"
                 android:orientation="horizontal">
 
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnAddExercise"
-                    android:layout_width="wrap_content"
+                    android:layout_width="20dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
+                    android:minWidth="40dp"
+                    android:minHeight="5dp"
+                    android:background="@drawable/solid_button"
+                    android:textColor="#FFFFFF"
                     android:text="운동 추가" />
 
             </LinearLayout>
@@ -96,20 +100,17 @@
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@+id/textViewNumOfCycles"/>
 
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnCheck"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:minWidth="40dp"
+                    android:minHeight="5dp"
                     android:layout_alignParentEnd="true"
+                    android:background="@drawable/solid_button"
+                    android:textColor="#FFFFFF"
                     android:text="확인" />
 
-                <Button
-                    android:id="@+id/btnStart"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="시작"
-                    android:visibility="invisible"/>
             </RelativeLayout>
 
 

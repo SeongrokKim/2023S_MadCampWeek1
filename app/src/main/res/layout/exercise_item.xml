@@ -43,7 +43,7 @@
         android:hint="분"
         android:textSize="15dp" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnDelete"
         android:layout_width="40dp"
         android:layout_height="40dp"

@@ -65,7 +65,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewExercise" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/buttonSkip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -73,17 +73,21 @@
             android:layout_marginTop="69dp"
             android:layout_marginBottom="48dp"
             android:text="Skip"
+            android:background="@drawable/solid_button"
+            android:textColor="#FFFFFF"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewReps" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/buttonExit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="68dp"
             android:layout_marginBottom="48dp"
             android:text="Exit"
+            android:background="@drawable/solid_button"
+            android:textColor="#FFFFFF"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.516"
@@ -91,22 +95,26 @@
             app:layout_constraintTop_toBottomOf="@+id/textViewReps"
             app:layout_constraintVertical_bias="0.869" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/buttonStart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Start"
+            android:background="@drawable/solid_button"
+            android:textColor="#FFFFFF"
             app:layout_constraintBottom_toTopOf="@+id/buttonSkip"
             app:layout_constraintEnd_toStartOf="@+id/buttonStop"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewReps" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/buttonStop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="96dp"
             android:text="Stop"
+            android:background="@drawable/solid_button"
+            android:textColor="#FFFFFF"
             app:layout_constraintBottom_toTopOf="@+id/buttonExit"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewReps" />
