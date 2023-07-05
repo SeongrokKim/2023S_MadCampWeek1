@@ -107,6 +107,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
                         timeCho = exerciseItem.getTimeExerciseCho().getText().toString();
                     }
                     String time = "00:"+timeCho+":"+timeBun;
+                    Toast.makeText(v.getContext(), time, Toast.LENGTH_SHORT);
                     Map<String, String> exMap = new HashMap<>();
                     exMap.put("name", exercise);
                     exMap.put("time", time);
