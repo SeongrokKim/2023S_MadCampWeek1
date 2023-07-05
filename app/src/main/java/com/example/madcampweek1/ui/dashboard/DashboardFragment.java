@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -109,6 +110,14 @@ public class DashboardFragment extends Fragment {
         // 프래그먼트에 관련된 코드 작성
         recyclerViewGallery = binding.recyclerViewGallery;
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 4);
+        // spanCount는 한 줄에 표시할 아이템 개수를 나타냅니다. 원하는 값으로 수정하세요.
+
+        // 아이템 간 여백 설정
+        int spacing = 16; // 여백 크기를 원하는 값으로 수정하세요.
+        boolean includeEdge = true; // 여백을 아이템 가장자리에 포함할지 여부를 나타냅니다.
+
+        // ItemDecoration을 생성하여 RecyclerView에 추가
+        recyclerViewGallery.addItemDecoration(new GridSpacingItemDecoration(4, spacing, includeEdge));
 
         recyclerViewGallery.setLayoutManager(layoutManager);
         dataList = dashboardViewModel.getDataList();
@@ -162,12 +171,12 @@ public class DashboardFragment extends Fragment {
         }
 
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.gallery_grid_item_layout, parent, false);
             return new ViewHolder(view);
         }
 
-        public void addItem(Map<String, String> item) {
+        public void addItem(@NonNull Map<String, String> item) {
             // JSON 하나 추가
             //잘못된 데이터명의 경우 Error로 이미지 변경
             if(getResources().getIdentifier(item.get("path"), "drawable", context.getPackageName()) == 0){
@@ -178,7 +187,7 @@ public class DashboardFragment extends Fragment {
         }
 
         // RecyclerView 어댑터에 데이터를 추가하는 메서드
-        public void addItem(List<Map<String, String>> maps) {
+        public void addItem(@NonNull List<Map<String, String>> maps) {
             //JSON Array 추가
             for (Map<String,String> item : maps) {
                 dataList.add(item);
@@ -187,7 +196,7 @@ public class DashboardFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
             // 아이템 데이터 설정
 
             Map<String,String> dataItem = dataList.get(position);
@@ -211,7 +220,9 @@ public class DashboardFragment extends Fragment {
 //            // 사용이 끝난 Bitmap은 메모리 해제
 //            originalBitmap.recycle();
 //            holder.imageView.setImageBitmap(thumbnailBitmap);
-
+            // 스트로크 스타일 설정
+            holder.imageView.setBackgroundResource(R.drawable.stroke_background);
+            holder.textView.setBackgroundResource(R.drawable.stroke_background);
             holder.imageView.setImageResource(getResources().getIdentifier(filePath, "drawable", context.getPackageName()));
             //holder.photoIndex = position;
             //Toast.makeText(getContext(), filePath, Toast.LENGTH_SHORT).show();
@@ -311,6 +322,38 @@ public class DashboardFragment extends Fragment {
             return fileName.substring(0, lastDotIndex);
         }
         return null;
+    }
+    public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
+        private final int spanCount;
+        private final int spacing;
+        private final boolean includeEdge;
+
+        public GridSpacingItemDecoration(int spanCount, int spacing, boolean includeEdge) {
+            this.spanCount = spanCount;
+            this.spacing = spacing;
+            this.includeEdge = includeEdge;
+        }
+
+        @Override
+        public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+            int position = parent.getChildAdapterPosition(view);
+            int column = position % spanCount;
+
+            if (includeEdge) {
+                outRect.left = spacing - column * spacing / spanCount;
+                outRect.right = (column + 1) * spacing / spanCount;
+                if (position < spanCount) {
+                    outRect.top = spacing;
+                }
+                outRect.bottom = spacing;
+            } else {
+                outRect.left = column * spacing / spanCount;
+                outRect.right = spacing - (column + 1) * spacing / spanCount;
+                if (position >= spanCount) {
+                    outRect.top = spacing;
+                }
+            }
+        }
     }
 }
 
